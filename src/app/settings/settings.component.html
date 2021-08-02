@@ -1,0 +1,24 @@
+<header>
+  <div class="title">
+    Cards
+  </div>
+  <div class="close-button" (click)="onClickClose()">
+    <img src="https://img.icons8.com/material/24/000000/delete-sign--v1.png" draggable="false"/>
+  </div>
+</header>
+<div class="separator"></div>
+<div class="cards-control">
+  <div class="cards-count">
+    {{ cardList?.length === 1 ? '1 Card' : (cardList?.length || 0) + ' Cards' }}
+  </div>
+  <div class="add-button" (click)="onClickAddCard()">
+    <img src="https://img.icons8.com/material/24/000000/plus-math--v2.png" draggable="false"/>
+  </div>
+</div>
+<div *ngFor="let card of cardList">
+  {{ card.id }}
+</div>
+<div class="separator"></div>
+<footer>
+  <span>Icons by <a href="https://icons8.com/">Icons8</a></span>
+</footer>

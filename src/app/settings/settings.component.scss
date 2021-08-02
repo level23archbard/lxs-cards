@@ -1,0 +1,71 @@
+:host {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+header {
+  display: flex;
+  flex-flow: row nowrap;
+  margin-left: 3rem;
+
+  .title {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .close-button {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    > * {
+      flex: 1;
+      object-fit: none;
+    }
+  }
+}
+
+.separator {
+  margin: 0 1rem;
+  height: 0.0625rem;
+  background-color: #222;
+}
+
+.cards-control {
+  display: flex;
+  flex-flow: row nowrap;
+  margin: 0 1rem;
+
+  .cards-count {
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  .add-button {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    > * {
+      flex: 1;
+      object-fit: none;
+    }
+  }
+}
+
+footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.5rem;
+  font-size: 9px;
+}
