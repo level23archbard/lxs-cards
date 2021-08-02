@@ -1,28 +1,48 @@
-import { Component, ElementRef, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { map, mergeMap, takeUntil } from 'rxjs/operators';
+
+import { CardLayout, CardLayoutService } from '../card-layout.service';
 
 @Component({
   selector: 'lxs-card',
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.scss']
 })
-export class CardComponent implements OnInit, OnDestroy {
+export class CardComponent implements OnChanges, OnInit, OnDestroy {
 
-  offset = new BehaviorSubject<{x: number, y: number}>({x: 0, y: 0});
+  @Input() id!: string;
+
   clickStart = new Subject<MouseEvent>();
   clickMove = new Subject<MouseEvent>();
   clickStop = new Subject<MouseEvent>();
   subscriptions = new Subscription();
+  styleOffset = new BehaviorSubject<CardLayout["position"]>({x: 0, y: 0});
+  styleZIndex = new BehaviorSubject<CardLayout["zIndex"]>(0);
 
-  constructor(private element: ElementRef) {}
+  constructor(private element: ElementRef, private cardLayout: CardLayoutService) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.id) {
+      const layout = this.cardLayout.getLayoutForCard(this.id);
+      this.styleOffset.next(layout.position);
+      this.styleZIndex.next(layout.zIndex);
+    }
+  }
 
   ngOnInit(): void {
     this.subscriptions.add(
-      this.offset.subscribe((value) => {
+      this.styleOffset.subscribe((value) => {
         const element = this.element.nativeElement;
         element.style.left = value.x + 'px';
         element.style.top = value.y + 'px';
+      })
+    );
+
+    this.subscriptions.add(
+      this.styleZIndex.subscribe((value) => {
+        const element = this.element.nativeElement;
+        element.style.zIndex = value;
       })
     );
 
@@ -31,7 +51,7 @@ export class CardComponent implements OnInit, OnDestroy {
       this.clickStart.pipe(
         // Convert the initial click position into an offset from the starting offset
         map((event) => {
-          const initial = this.offset.getValue();
+          const initial = this.styleOffset.getValue();
           return {
             x: event.clientX - initial.x,
             y: event.clientY - initial.y,
@@ -51,9 +71,15 @@ export class CardComponent implements OnInit, OnDestroy {
         )),
       ).subscribe((value) => {
         // Set the global offset onto the elements style
-        this.offset.next(value);
+        this.cardLayout.registerPositionUpdateForCard(this.id, value);
+        this.styleOffset.next(value);
       })
     );
+
+    this.subscriptions.add(this.clickStart.subscribe((event) => {
+      const index = this.cardLayout.registerBringToFrontInteractionForCard(this.id);
+      this.styleZIndex.next(index);
+    }));
   }
 
   ngOnDestroy(): void {

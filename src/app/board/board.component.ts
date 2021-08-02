@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-import { CardEntry, CardListService } from '../card-list.service';
+import { CardLayout, CardLayoutService } from '../card-layout.service';
 
 @Component({
   selector: 'lxs-board',
@@ -10,13 +10,13 @@ import { CardEntry, CardListService } from '../card-list.service';
 })
 export class BoardComponent implements OnInit, OnDestroy {
 
-  cardList?: CardEntry[];
+  cardLayouts?: CardLayout[];
   subscription = new Subscription();
 
-  constructor(private cardListService: CardListService) { }
+  constructor(private cardLayoutService: CardLayoutService) { }
 
   ngOnInit(): void {
-    this.subscription.add(this.cardListService.cardList.subscribe((list) => this.cardList = list));
+    this.subscription.add(this.cardLayoutService.cardLayouts.subscribe((layouts) => this.cardLayouts = layouts));
   }
 
   ngOnDestroy(): void {
